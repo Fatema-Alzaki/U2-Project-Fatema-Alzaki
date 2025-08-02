@@ -1,0 +1,43 @@
+{
+  "name": "u2-project-fatema-alzaki",
+  "version": "1.0.0",
+  "description": "EcoFix Hub is a full-stack MVC application that empowers engineers to log, manage, and monitor **environmental repair projects**. It focuses on *restoring* what’s damaged — from oil spills to broken solar installations — and provides detailed insights into environmental recovery efforts.",
+  "main": "app.js",
+  "directories": {
+    "test": "tests"
+  },
+ "scripts": {
+  "test": "jest",
+  "start": "node server.js",
+  "dev": "nodemon server.js",
+  "load": "artillery run artillery.yml"
+},
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Fatema-Alzaki/U2-Project-Fatema-Alzaki.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/Fatema-Alzaki/U2-Project-Fatema-Alzaki/issues"
+  },
+  "homepage": "https://github.com/Fatema-Alzaki/U2-Project-Fatema-Alzaki#readme",
+  "dependencies": {
+    "bcrypt": "^6.0.0",
+    "dotenv": "^17.2.1",
+    "express": "^5.1.0",
+    "jsonwebtoken": "^9.0.2",
+    "jsx-view-engine": "^1.0.0",
+    "method-override": "^3.0.0",
+    "mongoose": "^8.17.0",
+    "morgan": "^1.10.1"
+  },
+  "devDependencies": {
+    "artillery": "^1.7.9",
+    "jest": "^30.0.5",
+    "mongodb-memory-server": "^10.2.0",
+    "supertest": "^7.1.4"
+  }
+}
