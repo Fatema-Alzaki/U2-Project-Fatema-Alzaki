@@ -1,15 +1,18 @@
-require('dotenv').config()
-const app = require('./app')
-const db = require('./models/db')
-const PORT = process.env.PORT || 3000
+require('dotenv').config();
+const mongoose = require('mongoose');
+const app = require('./app');
+
+// DB connection
+const db = require('./models/db');
 
 db.once('open', () => {
-    console.log('connected to mongo')
-})
-db.on('error', (error) => {
-  console.error(error.message)
-})
+  console.log('✅ Connected to MongoDB');
+});
+db.on('error', (err) => {
+  console.error('MongoDB connection error:', err);
+});
 
+const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
-    console.log(`We in the building ${PORT}`)
-})
+  console.log(`🚀 Server running on port ${PORT}`);
+});

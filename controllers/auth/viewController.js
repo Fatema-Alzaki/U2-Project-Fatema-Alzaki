@@ -1,8 +1,19 @@
-module.exports = {
-  showSignup: (req, res) => {
-    res.render('engineers/SignUp')
+const viewController = {
+  signUp(req, res) {
+    res.render('engineers/SignUp');
   },
-  showSignin: (req, res) => {
-    res.render('engineers/SignIn')
+
+  signIn(req, res) {
+    res.render('engineers/SignIn');
+  },
+
+  apiAuth(req, res) {
+    res.json({ user: req.user, token: res.locals.data.token });
+  },
+
+  redirectToLogin(req, res) {
+    res.redirect('/auth/signin');
   }
-}
+};
+
+module.exports = viewController;
