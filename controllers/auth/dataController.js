@@ -1,34 +1,34 @@
-const User = require('../../models/User')
+const User = require('../../models/User');
+const bcrypt = require('bcrypt');
 
-const dataController = {
-  async register(req, res, next) {
+module.exports = {
+  async createUser(req, res, next) {
     try {
-      const user = await User.create(req.body)
-      const token = user.generateToken()
-      res.locals.data = { user, token }
-      next()
-    } catch (error) {
-      res.status(400).json({ error: error.message })
+      const hashedPassword = await bcrypt.hash(req.body.password, 10);
+      const user = await User.create({
+        name: req.body.name,
+        email: req.body.email,
+        password: hashedPassword,
+      });
+      res.locals.data = user;
+      next();
+    } catch (err) {
+      res.status(400).json({ error: err.message });
     }
   },
 
-  async login(req, res, next) {
+  async loginUser(req, res, next) {
     try {
-      const user = await User.findOne({ email: req.body.email })
-      if (!user || !(await user.comparePassword(req.body.password))) {
-        return res.status(401).json({ error: 'Invalid credentials' })
-      }
-      const token = user.generateToken()
-      res.locals.data = { user, token }
-      next()
-    } catch (error) {
-      res.status(400).json({ error: error.message })
-    }
-  },
+      const user = await User.findOne({ email: req.body.email });
+      if (!user) throw new Error('User not found');
 
-  logout(req, res) {
-    res.clearCookie('token').json({ message: 'Logged out' })
+      const match = await bcrypt.compare(req.body.password, user.password);
+      if (!match) throw new Error('Invalid credentials');
+
+      res.locals.data = user;
+      next();
+    } catch (err) {
+      res.status(401).json({ error: err.message });
+    }
   }
-}
-
-module.exports = dataController
+};

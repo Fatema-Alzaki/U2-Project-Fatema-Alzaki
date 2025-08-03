@@ -1,8 +1,15 @@
-const express = require('express')
-const router = express.Router()
+const express = require('express');
+const router = express.Router();
 
-router.use('/auth', require('../controllers/auth/routeController'))
-router.use('/engineers', require('../controllers/projects/routeController')) // adjust if needed
-router.use('/projects', require('../controllers/projects/routeController'))
+// Auth routes (sign up, sign in)
+router.use('/auth', require('../controllers/auth/routeController'));
 
-module.exports = router
+// Engineer routes
+router.use('/engineers', require('../controllers/engineers/routeController'));
+
+// Project routes
+router.use('/projects', require('../controllers/projects/routeController'));
+
+// Dashboard (optional: add more routes like /dashboard if needed)
+
+module.exports = router;

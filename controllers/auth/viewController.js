@@ -1,8 +1,8 @@
 module.exports = {
-  showLogin(req, res) {
-    res.render('engineers/SignIn')
-  },
-  showRegister(req, res) {
+  showSignup: (req, res) => {
     res.render('engineers/SignUp')
+  },
+  showSignin: (req, res) => {
+    res.render('engineers/SignIn')
   }
 }

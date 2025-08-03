@@ -4,7 +4,7 @@ const cors = require('cors')
 const methodOverride = require('method-override')
 const morgan = require('morgan')
 const path = require('path')
-const cookieParser = require('cookie-parser')
+
 require('dotenv').config()
 
 // DB connection
@@ -14,7 +14,7 @@ require('./models/db')
 app.use(cors())
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
-app.use(cookieParser())
+
 app.use(methodOverride('_method'))
 app.use(morgan('dev'))
 
@@ -22,8 +22,8 @@ app.use(morgan('dev'))
 app.use(express.static('public'))
 
 // View engine
-app.set('view engine', 'jsx')
-app.engine('jsx', require('express-react-views').createEngine())
+app.set('view engine', 'jsx');
+app.engine('jsx', require('jsx-view-engine'));
 
 // Routes
 const apiRoutes = require('./routes/apiRoutes')
