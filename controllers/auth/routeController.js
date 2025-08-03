@@ -1,16 +1,15 @@
 const express = require('express')
 const router = express.Router()
-const dataCtrl = require('./dataController')
-const apiCtrl = require('./apiController')
-const viewCtrl = require('./viewController')
+const viewController = require('./viewController')
+const dataController = require('./dataController')
+const apiController = require('./apiController')
 
-// API routes
-router.post('/register', dataCtrl.register, apiCtrl.register)
-router.post('/login', dataCtrl.login, apiCtrl.login)
-router.post('/logout', dataCtrl.logout)
+// Sign up routes
+router.get('/signup', viewController.showSignup)
+router.post('/signup', dataController.createUser, apiController.setTokenCookie)
 
-// View routes (optional)
-router.get('/signup', viewCtrl.showRegister)
-router.get('/signin', viewCtrl.showLogin)
+// Sign in routes
+router.get('/signin', viewController.showSignin)
+router.post('/signin', apiController.loginUser)
 
 module.exports = router
