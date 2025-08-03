@@ -8,6 +8,10 @@ const engineerApi = require('../controllers/engineers/apiController')
 // Dashboard route
 router.get('/engineers/dashboard', engineerApi.auth, engineerApi.dashboard)
 
+// user
+router.use('/users', require('../controllers/users/routeController'))
+
+
 // Auth
 router.post('/users', userApi.createUser)
 router.post('/users/login', userApi.loginUser)
