@@ -1,0 +1,71 @@
+config:
+  target: "http://localhost:3000"  
+  phases:
+    - duration: 30
+      arrivalRate: 5
+  defaults:
+    headers:
+      Content-Type: application/json
+
+scenarios:
+  - name: "Public Routes"
+    flow:
+      - get:
+          url: "/api/projects"
+
+  - name: "Register + Login"
+    flow:
+      - post:
+          url: "/api/users"
+          json:
+            name: "Load Tester"
+            email: "loadtester@example.com"
+            password: "test1234"
+      - post:
+          url: "/api/users/login"
+          json:
+            email: "loadtester@example.com"
+            password: "test1234"
+      - function: "saveToken"
+      - get:
+          url: "/api/users/profile"
+          headers:
+            Authorization: "Bearer {{ token }}"
+
+  - name: "Create Engineer + Project (Authenticated)"
+    flow:
+      - post:
+          url: "/api/users/login"
+          json:
+            email: "loadtester@example.com"
+            password: "test1234"
+      - function: "saveToken"
+      - post:
+          url: "/api/engineers"
+          headers:
+            Authorization: "Bearer {{ token }}"
+          json:
+            name: "Eco Engineer"
+            specialty: "Soil"
+            region: "North"
+            availability: true
+      - post:
+          url: "/api/projects"
+          headers:
+            Authorization: "Bearer {{ token }}"
+          json:
+            title: "Load Test Project"
+            issueType: "soil"
+            toolsUsed: "shovel, filter"
+            status: "pending"
+
+plugins:
+  expect:
+    - statusCode: 200
+
+functions:
+  saveToken: |
+    function (req, res, context, ee, next) {
+      context.vars.token = res.body.token;
+      return next();
+    }
