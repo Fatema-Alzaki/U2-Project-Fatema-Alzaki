@@ -26,7 +26,8 @@ module.exports = {
       if (!match) throw new Error('Invalid credentials');
 
       res.locals.data = user;
-      res.send(user)
+      // res.send(user)
+      next()
     } catch (err) {
       res.status(401).json({ error: err.message });
     }

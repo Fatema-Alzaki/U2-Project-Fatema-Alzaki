@@ -15,6 +15,6 @@ router.post('/signup', dataController.createUser, viewController.redirectToLogin
 router.get('/signin', viewController.signIn);
 
 // Handle login form
-router.post('/signin', dataController.loginUser);
+router.post('/signin', dataController.loginUser, viewController.redirectToHome);
 
 module.exports = router;

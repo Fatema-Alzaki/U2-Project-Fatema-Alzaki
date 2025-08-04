@@ -13,6 +13,10 @@ const viewController = {
 
   redirectToLogin(req, res) {
     res.redirect('/auth/signin');
+  },
+
+    redirectToHome(req, res) {
+    res.redirect('/');
   }
 };
 

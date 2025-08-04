@@ -26,7 +26,7 @@ app.engine('jsx', require('jsx-view-engine')());
 // ---------------------------
 // 🔀 Route Controllers
 // ---------------------------
-const webRoutes = require('./routes/webRoutes');
+// const webRoutes = require('./routes/webRoutes');
 const apiRoutes = require('./routes/apiRoutes');
 
 // ✅ ADD THIS
@@ -36,7 +36,10 @@ const authRoutes = require('./controllers/auth/routeController')
 // ---------------------------
 // 🛣 Route Mounting
 // ---------------------------
-app.use('/', webRoutes);
+// app.use('/', webRoutes);
+app.get('/', (req, res) => {
+    res.render('layouts/Layout')
+})
 app.use('/api', apiRoutes);
 
 // ✅ ADD THIS
