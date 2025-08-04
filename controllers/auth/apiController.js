@@ -83,3 +83,15 @@ exports.getProfile = async (req, res) => {
     res.status(400).json({ message: error.message });
   }
 };
+
+module.exports.signup = async (req, res) => {
+  try {
+    const user = await User.create(req.body);
+    const token = user.generateToken();
+    res.cookie('jwt', token, { httpOnly: true });
+    res.redirect('/plants'); // or dashboard
+  } catch (err) {
+    console.error(err);
+    res.status(400).send('Signup failed');
+  }
+};

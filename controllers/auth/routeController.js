@@ -1,19 +1,20 @@
 const express = require('express');
 const router = express.Router();
+const apiController = require('./apiController');
 const viewController = require('./viewController');
 const dataController = require('./dataController');
-const apiController = require('./apiController');
 
-// GET signup page
-router.get('/signup', viewController.showSignup);
 
-// POST signup
-router.post('/signup', dataController.createUser, apiController.register);
+// Signup page (form)
+router.get('/signup', viewController.signUp);
 
-// GET signin page
-router.get('/signin', viewController.showSignin);
+// Handle signup form submission
+router.post('/signup', dataController.createUser, viewController.redirectToLogin);
 
-// POST signin
-router.post('/signin', dataController.loginUser, apiController.login);
+// Login page (form)
+router.get('/signin', viewController.signIn);
+
+// Handle login form
+router.post('/signin', dataController.loginUser);
 
 module.exports = router;

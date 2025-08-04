@@ -7,9 +7,6 @@ const path = require('path');
 
 require('dotenv').config();
 
-// MongoDB connection
-require('./models/db');
-
 // ---------------------------
 // 🧩 Middleware
 // ---------------------------
@@ -18,29 +15,33 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(methodOverride('_method'));
 app.use(morgan('dev'));
-
-// ---------------------------
-// 🌐 Static Assets
-// ---------------------------
 app.use(express.static('public'));
 
 // ---------------------------
 // 🎨 View Engine (JSX)
 // ---------------------------
 app.set('view engine', 'jsx');
-app.engine('jsx', require('jsx-view-engine'));
+app.engine('jsx', require('jsx-view-engine')());
 
 // ---------------------------
-// 🔀 Routes
+// 🔀 Route Controllers
 // ---------------------------
-
-// Web views (SignIn, Dashboard, etc.)
 const webRoutes = require('./routes/webRoutes');
-app.use('/', webRoutes);
-
-// API routes (CRUD + Auth + JSON)
 const apiRoutes = require('./routes/apiRoutes');
+
+// ✅ ADD THIS
+const userRoutes = require('./controllers/users/routeController');
+const authRoutes = require('./controllers/auth/routeController')
+
+// ---------------------------
+// 🛣 Route Mounting
+// ---------------------------
+app.use('/', webRoutes);
 app.use('/api', apiRoutes);
+
+// ✅ ADD THIS
+app.use('/users', userRoutes);
+app.use('/auth', authRoutes);
 
 // ---------------------------
 module.exports = app;

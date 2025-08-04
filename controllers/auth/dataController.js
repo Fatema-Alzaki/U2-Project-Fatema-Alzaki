@@ -4,11 +4,10 @@ const bcrypt = require('bcrypt');
 module.exports = {
   async createUser(req, res, next) {
     try {
-      const hashedPassword = await bcrypt.hash(req.body.password, 10);
       const user = await User.create({
         name: req.body.name,
         email: req.body.email,
-        password: hashedPassword,
+        password: req.body.password,
       });
       res.locals.data = user;
       next();
@@ -18,6 +17,7 @@ module.exports = {
   },
 
   async loginUser(req, res, next) {
+    console.log(req.body)
     try {
       const user = await User.findOne({ email: req.body.email });
       if (!user) throw new Error('User not found');
@@ -26,7 +26,7 @@ module.exports = {
       if (!match) throw new Error('Invalid credentials');
 
       res.locals.data = user;
-      next();
+      res.send(user)
     } catch (err) {
       res.status(401).json({ error: err.message });
     }
