@@ -1,12 +1,12 @@
 const React = require('react')
 const Layout = require('../layouts/Layout')
 
-function SignIn() {
+function SignIn(props) {
   return (
     <Layout>
       <div className="form-container">
         <h2>Login to EcoFix Hub</h2>
-        <form action="/auth/signin" method="POST">
+        <form action={`/auth/signin?token=${props.token}`} method="POST">
           <label htmlFor="email">Email</label>
           <input type="email" name="email" required />
 

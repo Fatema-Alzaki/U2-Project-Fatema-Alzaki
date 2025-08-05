@@ -16,6 +16,10 @@ app.use(express.urlencoded({ extended: true }));
 app.use(methodOverride('_method'));
 app.use(morgan('dev'));
 app.use(express.static('public'));
+app.use((req, res, next) => {
+    res.locals.data = {}
+    next()
+})
 
 // ---------------------------
 // 🎨 View Engine (JSX)
@@ -26,24 +30,27 @@ app.engine('jsx', require('jsx-view-engine')());
 // ---------------------------
 // 🔀 Route Controllers
 // ---------------------------
-// const webRoutes = require('./routes/webRoutes');
-const apiRoutes = require('./routes/apiRoutes');
+
 
 // ✅ ADD THIS
-const userRoutes = require('./controllers/users/routeController');
+
 const authRoutes = require('./controllers/auth/routeController')
+const { auth } = require('./controllers/auth/apiController')
+const apiRoutes = require('./routes/apiRoutes');
 
 // ---------------------------
 // 🛣 Route Mounting
 // ---------------------------
 // app.use('/', webRoutes);
-app.get('/', (req, res) => {
-    res.render('layouts/Layout')
+app.get('/', auth, (req, res) => {
+    res.render('layouts/Layout', {
+        ...res.locals.data,
+        user: req.user
+    })
 })
-app.use('/api', apiRoutes);
 
-// ✅ ADD THIS
-app.use('/users', userRoutes);
+
+app.use('/api', apiRoutes);
 app.use('/auth', authRoutes);
 
 // ---------------------------

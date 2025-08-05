@@ -1,33 +1,50 @@
 const express = require('express');
 const router = express.Router();
 
-const apiController = require('../auth/apiController');
+const apiController = require('./apiController');
 const dataController = require('./dataController');
 const viewController = require('./viewController');
+const apiUserController = require('../../controllers/auth/apiController');
 
-// Show all projects
-router.get('/', viewController.index);
+// ----------------------
+// 🌐 View Routes
+// ----------------------
 
-// Show new project form
-router.get('/new', apiController.auth, viewController.newForm);
+// All Projects Index
+router.get('/', apiUserController.auth, viewController.index);
 
-// Show single project
-router.get('/:id', viewController.show);
+// Create New Project Form
+router.get('/new', apiUserController.auth, viewController.new);
 
-// Create new project
-router.post('/', apiController.auth, dataController.createProject);
+// My Volunteered Projects
+router.get('/volunteered', apiUserController.auth, viewController.volunteered);
 
-// Sign up for a project (volunteer logic)
-router.post('/:id/signup', apiController.auth, dataController.signupForProject);
+// My Created Projects
+router.get('/my', apiUserController.auth, viewController.myProjects);
 
-// Comment on a project
-router.post('/:id/comments', apiController.auth, dataController.addComment);
+// Show Project Details
+router.get('/:id', apiUserController.auth, viewController.show);
 
-// Edit project
-router.get('/:id/edit', apiController.auth, viewController.editForm);
-router.put('/:id', apiController.auth, dataController.updateProject);
+// Edit Project Form
+router.get('/:id/edit', apiUserController.auth, viewController.edit);
 
-// Delete project
-router.delete('/:id', apiController.auth, dataController.deleteProject);
+// ----------------------
+// 🔁 Data / API Routes
+// ----------------------
+
+// Create New Project (POST form)
+router.post('/', apiUserController.auth, dataController.createProject);
+
+// Volunteer for a Project
+router.post('/:id/signup', apiUserController.auth, dataController.signupForProject);
+
+// Add Comment to Project
+router.post('/:id/comments', apiUserController.auth, dataController.addComment);
+
+// Update Project
+router.put('/:id', apiUserController.auth, dataController.updateProject);
+
+// Delete Project
+router.delete('/:id', apiUserController.auth, dataController.deleteProject);
 
 module.exports = router;

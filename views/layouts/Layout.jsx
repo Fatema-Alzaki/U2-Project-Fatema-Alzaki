@@ -19,7 +19,15 @@ function Layout({ children, user }) {
             )}
             <hr />
           </header>
-
+          <div className="dashboard-container">
+            <nav style={{ textAlign: 'center', margin: '20px 0' }}>
+              <a href="/projects">All Projects</a> |{" "}
+              <a href="/dashboard">Dashboard</a> |{" "}
+              <a href="/projects/volunteered">My Volunteered Projects</a> |{" "}
+              <a href="/projects/my">My Created Projects</a> |{" "}
+              <a href="/profile">My Profile</a> {" "}
+            </nav>
+          </div>
           {children}
 
           <footer style={{ marginTop: "2rem", textAlign: "center", fontSize: "0.8rem" }}>

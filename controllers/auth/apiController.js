@@ -2,21 +2,28 @@ const User = require('../../models/User');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 
-// API middleware (auth using headers)
+// Use environment variable or fallback
+const JWT_SECRET = process.env.JWT_SECRET || 'secret';
+
+// Middleware: Protect routes using JWT
 exports.auth = async (req, res, next) => {
   try {
-    const token = req.header('Authorization').replace('Bearer ', '');
-    const data = jwt.verify(token, 'secret'); // Use env var in production!
+    const token = req.query.token || req.header('Authorization')?.replace('Bearer ', '');
+    if (!token) throw new Error('Missing token');
+
+    const data = jwt.verify(token, JWT_SECRET);
     const user = await User.findById(data._id);
-    if (!user) throw new Error();
+    if (!user) throw new Error('User not found');
+
     req.user = user;
+    res.locals.data.token = await user.generateToken(); // For views
     next();
   } catch (error) {
     res.status(401).json({ message: 'Unauthorized access' });
   }
 };
 
-// API Register
+//  API: Register User
 exports.createUser = async (req, res) => {
   try {
     const { name, email, password } = req.body;
@@ -28,28 +35,37 @@ exports.createUser = async (req, res) => {
     const user = new User({ ...req.body, password: hashedPassword });
     await user.save();
 
-    const token = jwt.sign({ _id: user._id }, 'secret'); // Use env var in production!
+    const token = jwt.sign({ _id: user._id }, JWT_SECRET);
     res.status(201).json({ user, token });
   } catch (error) {
     res.status(400).json({ message: error.message });
   }
 };
 
-// API Login
+//  API: Login User
 exports.loginUser = async (req, res) => {
   try {
     const user = await User.findOne({ email: req.body.email });
     const valid = user && await bcrypt.compare(req.body.password, user.password);
     if (!valid) return res.status(400).json({ message: 'Invalid credentials' });
 
-    const token = jwt.sign({ _id: user._id }, 'secret');
+    const token = jwt.sign({ _id: user._id }, JWT_SECRET);
     res.json({ user, token });
   } catch (error) {
     res.status(400).json({ message: error.message });
   }
 };
 
-// API Update
+//  API: Get Authenticated User Profile
+exports.getProfile = async (req, res) => {
+  try {
+    res.json({ user: req.user });
+  } catch (error) {
+    res.status(400).json({ message: error.message });
+  }
+};
+
+//  API: Update User
 exports.updateUser = async (req, res) => {
   try {
     const updates = Object.keys(req.body);
@@ -65,33 +81,12 @@ exports.updateUser = async (req, res) => {
   }
 };
 
-// API Delete
+//  API: Delete Authenticated User
 exports.deleteUser = async (req, res) => {
   try {
     await req.user.deleteOne();
     res.json({ message: 'User deleted successfully' });
   } catch (error) {
     res.status(400).json({ message: error.message });
-  }
-};
-
-// API Profile
-exports.getProfile = async (req, res) => {
-  try {
-    res.json({ user: req.user });
-  } catch (error) {
-    res.status(400).json({ message: error.message });
-  }
-};
-
-module.exports.signup = async (req, res) => {
-  try {
-    const user = await User.create(req.body);
-    const token = user.generateToken();
-    res.cookie('jwt', token, { httpOnly: true });
-    res.redirect('/plants'); // or dashboard
-  } catch (err) {
-    console.error(err);
-    res.status(400).send('Signup failed');
   }
 };

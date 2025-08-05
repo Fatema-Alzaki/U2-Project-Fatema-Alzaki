@@ -7,7 +7,7 @@ const userSchema = new mongoose.Schema({
   email: { type: String, unique: true },
   password: { type: String, required: true },
   role: { type: String, enum: ['engineer', 'admin'], default: 'engineer' },
-  engineers: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Engineer' }],
+  engineers: { type: mongoose.Schema.Types.ObjectId, ref: 'Engineer' },
   projects: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Project' }]
 }, { timestamps: true })
 
@@ -24,7 +24,7 @@ userSchema.methods.comparePassword = async function (candidate) {
 }
 
 userSchema.methods.generateToken = function () {
-  return jwt.sign({ _id: this._id }, process.env.JWT_SECRET, { expiresIn: '1d' })
+  return jwt.sign({ _id: this._id }, 'secret', { expiresIn: '1d' })
 }
 
 module.exports = mongoose.model('User', userSchema)

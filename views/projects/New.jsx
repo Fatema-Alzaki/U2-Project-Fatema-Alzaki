@@ -18,8 +18,8 @@ function New({ user }) {
         </label><br />
         <label>Equipment Used: <input type="text" name="equipment" /></label><br />
         <label>Volunteer Slots: <input type="number" name="volunteerLimit" required min="1" /></label><br />
-        <label>Before Image: <input type="file" name="beforeImage" /></label><br />
-        <label>After Image: <input type="file" name="afterImage" /></label><br />
+        {/* <label>Before Image: <input type="file" name="beforeImage" /></label><br />
+        <label>After Image: <input type="file" name="afterImage" /></label><br /> */}
         <button type="submit">Create Project</button>
       </form>
     </Layout>

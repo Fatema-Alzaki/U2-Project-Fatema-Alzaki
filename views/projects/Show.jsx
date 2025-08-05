@@ -1,15 +1,19 @@
-const React = require('react')
-const Layout = require('../layouts/Layout')
+const React = require('react');
+const Layout = require('../layouts/Layout');
 
-function Show({ project, engineer }) {
-  const isFull = project.volunteers.length >= project.volunteerLimit
+function Show({ project, engineer, props }) {
+  const isFull = project.volunteers.length >= project.volunteerLimit;
 
   return (
     <Layout engineer={engineer}>
       <h1>{project.title}</h1>
 
-      <img src={`/images/${project.beforeImage}`} alt="Before" style={{ maxWidth: '300px' }} />
-      <img src={`/images/${project.afterImage}`} alt="After" style={{ maxWidth: '300px' }} />
+      {/* {project.beforeImage && (
+        <img src={`/images/${project.beforeImage}`} alt="Before" style={{ maxWidth: '300px' }} />
+      )}
+      {project.afterImage && (
+        <img src={`/images/${project.afterImage}`} alt="After" style={{ maxWidth: '300px' }} />
+      )} */}
 
       <p><strong>Description:</strong> {project.description}</p>
       <p><strong>Location:</strong> {project.location}</p>
@@ -18,19 +22,35 @@ function Show({ project, engineer }) {
       <p><strong>Status:</strong> {project.status}</p>
       <p><strong>Timeline:</strong> {project.dateStarted} → {project.dateCompleted || 'Ongoing'}</p>
 
+      <div className="d-flex gap-2">
+        <a href={`/projects?token=${props.token}`} className="btn btn-secondary">
+          ← Back to All Projects
+        </a>
+        <a href={`/projects/${project._id}/edit?token=${props.token}`} className="btn btn-primary">
+          ✏️ Edit Project
+        </a>
+      </div>
+
+      <div className="mt-3">
+        <form action={`/projects/${project._id}?_method=DELETE&token=${props.token}`} method="POST">
+          <button type="submit" className="btn btn-danger">
+            🗑️ Delete Project
+          </button>
+        </form>
+      </div>
+{/* 
       <p>
-        <strong>Volunteers:</strong> {project.volunteers.length} / {project.volunteerLimit} 
+        <strong>Volunteers:</strong> {project.volunteers.length} / {project.volunteerLimit}
         {isFull && <span style={{ color: 'red', marginLeft: '10px' }}>FULL</span>}
       </p>
 
       {!isFull && (
         <form method="POST" action={`/projects/${project._id}/signup`}>
-          <button type="submit">Join Project</button>
+          <button type="submit" className="btn btn-success">Join Project</button>
         </form>
       )}
 
       <hr />
-
       <h3>Comments</h3>
       <ul>
         {project.comments.length > 0 ? (
@@ -45,12 +65,18 @@ function Show({ project, engineer }) {
       </ul>
 
       <form method="POST" action={`/projects/${project._id}/comments`}>
-        <textarea name="text" placeholder="Leave a comment..." rows="3" cols="40" required></textarea>
+        <textarea
+          name="text"
+          placeholder="Leave a comment..."
+          rows="3"
+          cols="40"
+          required
+        ></textarea>
         <br />
-        <button type="submit">Post</button>
-      </form>
+        <button type="submit" className="btn btn-primary">Post</button>
+      </form> */}
     </Layout>
-  )
+  );
 }
 
-module.exports = Show
+module.exports = Show;
