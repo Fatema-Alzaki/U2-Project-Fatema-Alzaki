@@ -1,12 +1,5 @@
 const mongoose = require('mongoose')
 
-
-const commentSchema = new mongoose.Schema({
-  user: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
-  text: String,
-  createdAt: { type: Date, default: Date.now }
-})
-
 const projectSchema = new mongoose.Schema({
   title: String,
   description: String,
@@ -15,13 +8,13 @@ const projectSchema = new mongoose.Schema({
   equipment: String,
   beforeImage: String,
   afterImage: String,
-  status: { type: String, default: 'pending' },
-  dateStarted: Date,
-  dateCompleted: Date,
+  status: { type: String, default: 'pending', enum: ['pending', 'complete'] },
+  dateStarted: String,
+  dateCompleted: String,
   volunteerLimit: Number,
-  volunteers: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Engineer' }],
+  volunteers: [{ type: mongoose.Schema.Types.ObjectId, ref: 'User'}],
   createdBy: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
-  comments: [commentSchema]
+  comments: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Comment'}]
 })
 
 module.exports = mongoose.model('Project', projectSchema)

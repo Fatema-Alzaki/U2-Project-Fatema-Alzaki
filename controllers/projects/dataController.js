@@ -1,4 +1,143 @@
-async function signupForProject(req, res) {
+const User = require('../../models/User')
+const Project = require('../../models/Project')
+const Comment = require('../../models/comment')
+
+/**
+ * - create a project * loggedin
+        - verify the user
+        - take the project data
+        - create a project
+        - send them back to the project index
+- edit a project * loggedin * authorized
+        - show a form to edit project
+        - fill out and process form
+        - redirect back to project
+- delete a project * logged in * authorized
+        - show a form to delete a project
+        - process the delete
+        - redirect them to a project index
+- read all projects * logged in
+        - index of all projects
+- see individual project * logged in
+        - display an individual project
+- see projects a user created 
+        - index filtered by createdBY
+- see projects a user is volunteered on *
+        - index filtered by being included in the volunteers
+
+### compound functions
+- volunteer a user for a project * loggedin
+   - identify a user
+   - identify a project
+   - add the user to the list of volunteers
+- comment on a project * logged in
+    - create a comment
+    - identify a project
+    - add the comment to a project
+ */
+
+const dataController = {}
+
+/*
+ * - create a project * loggedin
+       - verify the user
+       - take the project data
+       - create a project
+       - send them back to the project index
+*/
+dataController.createProject = async (req, res, next) => {
+  try {
+    const project = new Project(req.body);
+    await project.save()
+    res.locals.data.project = project
+    next()
+  } catch (error) {
+    res.status(400).json({ error: error.message });
+  }
+}
+/*
+- edit a project * loggedin * authorized
+    - show a form to edit project
+    - fill out and process form
+    - redirect back to project
+*/
+
+dataController.editProject = async (req, res, next) => {
+  try {
+    const project = await Project.findById(req.params.id).populate('user')
+    if (!project) {
+      return res.status(404).json({ error: 'Project not found' })
+    }
+    if (req.user._id.toString() !== project.user.toString()) {
+      return res.status(403).json({ error: 'Unauthorized to edit this project' })
+    }
+    res.locals.data.project = project
+    next()
+  } catch (error) {
+    res.status(400).json({ error: error.message });
+  }
+};
+
+/*
+- delete a project * logged in * authorized
+    - show a form to delete a project (via view)
+    - process the delete
+    - redirect them to project index
+*/
+
+dataController.deleteProject = async (req, res, next) => {
+  try {
+    const project = await Project.findById(req.params.id);
+    if (!project) {
+      return res.status(404).json({ error: 'Project not found' })
+    }
+    if (req.user._id.toString() !== project.owner.toString()) {
+      return res.status(403).json({ error: 'Unauthorized to delete this project' })
+    }
+    await project.deleteOne()
+    next()
+  } catch (error) {
+    res.status(400).json({ error: error.message });
+  }
+};
+
+
+
+dataController.addComment = async (req, res, next) => {
+  try {
+    const project = await Project.findById(req.params.id)
+    const comment = new Comment({...req.body, user: req.user._id})
+    await comment.save()
+    project.comments.addToSet(comment)
+    await project.save()
+    next()
+  } catch (err) {
+    res.status(500).json({ message: err.message })
+  }
+}
+
+dataController.show = async (req, res, next) => {
+    try {
+        res.locals.data.project = await Project.findById(req.params.id)
+        if(!res.locals.data.project){
+            throw new error(`could not locate a project with the id ${req.params.id}`)
+        }
+        next()
+    } catch (error) {
+      res.status(400).send({ message: error.message })
+    }
+}
+
+dataController.index = async (req, res, next) => {
+    try {
+        res.locals.data.projects = await Project.find({})
+        next()
+    } catch (error) {
+      res.status(400).send({ message: error.message })
+    }
+}
+
+dataController.signupForProject = async (req, res, next) => {
   try {
     const project = await Project.findById(req.params.id)
 
@@ -12,19 +151,71 @@ async function signupForProject(req, res) {
 
     project.volunteers.push(req.user._id)
     await project.save()
+    next()
 
     res.json({ message: 'Signed up successfully', project })
   } catch (err) {
     res.status(500).json({ message: err.message })
   }
 }
-async function addComment(req, res) {
+
+// - read all projects * logged in
+//         - index of all projects
+// - see individual project * logged in
+//         - display an individual project
+// - see projects a user created 
+//         - index filtered by createdBY
+// - see projects a user is volunteered on *
+//         - index filtered by being included in the volunteers
+
+dataController.readAllProjects = async (req, res, next) => {
+  try {
+    res.locals.data.projects = await Project.find({});
+    next();
+  } catch (error) {
+    res.status(400).send({ message: error.message });
+  }
+};
+
+
+dataController.seeIndividualProject = async (req, res, next) => {
   try {
     const project = await Project.findById(req.params.id)
-    project.comments.push({ user: req.user._id, text: req.body.text })
-    await project.save()
-    res.redirect(`/projects/${req.params.id}`)
-  } catch (err) {
-    res.status(500).json({ message: err.message })
+      .populate('owner') 
+      .populate('volunteers') 
+      .populate('comments.user')
+
+    if (!project) {
+      return res.status(404).send({ message: 'Project not found' });
+    }
+
+    res.locals.data.project = project
+    next()
+  } catch (error) {
+    res.status(400).send({ message: error.message });
   }
-}
+};
+
+
+dataController.seeUserCreatedProjects = async (req, res, next) => {
+  try {
+    const userId = req.user._id;
+    res.locals.data.projects = await Project.find({ owner: userId });
+    next();
+  } catch (error) {
+    res.status(400).send({ message: error.message });
+  }
+};
+
+
+dataController.volunteeredProjects = async (req, res, next) => {
+  try {
+    const userId = req.user._id;
+    res.locals.data.projects = await Project.find({ volunteers: userId });
+    next();
+  } catch (error) {
+    res.status(400).send({ message: error.message });
+  }
+};
+
+module.exports = dataController

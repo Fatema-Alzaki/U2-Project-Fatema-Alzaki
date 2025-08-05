@@ -7,7 +7,6 @@ const userSchema = new mongoose.Schema({
   email: { type: String, unique: true },
   password: { type: String, required: true },
   role: { type: String, enum: ['engineer', 'admin'], default: 'engineer' },
-  engineers: { type: mongoose.Schema.Types.ObjectId, ref: 'Engineer' },
   projects: [{ type: mongoose.Schema.Types.ObjectId, ref: 'Project' }]
 }, { timestamps: true })
 
