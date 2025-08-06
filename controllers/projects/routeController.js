@@ -1,50 +1,87 @@
 const express = require('express');
 const router = express.Router();
 
-const apiController = require('./apiController');
 const dataController = require('./dataController');
 const viewController = require('./viewController');
-const apiUserController = require('../../controllers/auth/apiController');
+const authController = require('../../controllers/auth/dataController');
 
 // ----------------------
 // 🌐 View Routes
 // ----------------------
+/*
+### projects
+- create a project * loggedin
+        - verify the user
+        - take the project data
+        - create a project
+        - send them back to the project index
+*/
+router.post('/', authController.auth, dataController.createProject, viewController.redirectToCreatedProjects)// this redirects to createdProjects
+router.get('/new', authController.auth, viewController.new) // show the form that has the create action
 
-// All Projects Index
-router.get('/', apiUserController.auth, viewController.index);
+/*
+- edit a project * loggedin * authorized
+        - show a form to edit project
+        - fill out and process form
+        - redirect back to project
+*/
+router.put('/:id', authController.auth, dataController.editProject, viewController.redirectToShowPage
+)
+router.get('/:id/edit', authController.auth, dataController.seeIndividualProject, viewController.edit
+)
 
-// Create New Project Form
-router.get('/new', apiUserController.auth, viewController.new);
+/*
+- delete a project * logged in * authorized
+        - show a form to delete a project
+        - process the delete
+        - redirect them to a project index
+*/
+router.delete('/:id', authController.auth, dataController.deleteProject, viewController.redirectToCreatedProjects)
+/*
+- read all projects * logged in
+        - index of all projects
+*/
+router.get('/', authController.auth, dataController.index, viewController.index)
 
-// My Volunteered Projects
-router.get('/volunteered', apiUserController.auth, viewController.volunteered);
+/*
+- see individual project * logged in
+        - display an individual project
+*/
 
-// My Created Projects
-router.get('/my', apiUserController.auth, viewController.myProjects);
+router.get('/:id', authController.auth, dataController.seeIndividualProject, viewController.show)
+/*
+- see projects a user created 
+        - index filtered by createdBY
+*/
 
-// Show Project Details
-router.get('/:id', apiUserController.auth, viewController.show);
+router.get('/index/created', authController.auth, dataController.seeUserCreatedProjects, viewController.indexWithDeleteButtons)
 
-// Edit Project Form
-router.get('/:id/edit', apiUserController.auth, viewController.edit);
+/*
+- see projects a user is volunteered on *
+        - index filtered by being included in the volunteers
+*/
 
-// ----------------------
-// 🔁 Data / API Routes
-// ----------------------
+router.get('/index/volunteered', authController.auth, dataController.volunteeredProjects, viewController.volunteered)
 
-// Create New Project (POST form)
-router.post('/', apiUserController.auth, dataController.createProject);
+/*
+### comments
+### compound functions
+- volunteer a user for a project * loggedin
+   - identify a user
+   - identify a project
+   - add the user to the list of volunteers
+*/
 
-// Volunteer for a Project
-router.post('/:id/signup', apiUserController.auth, dataController.signupForProject);
+router.post('/:id/volunteer', authController.auth, dataController.signupForProject, viewController.redirectToVolunteeredProjects)
 
-// Add Comment to Project
-router.post('/:id/comments', apiUserController.auth, dataController.addComment);
+/*
+- comment on a project * logged in
+    - create a comment
+    - identify a project
+    - add the comment to a project
+*/
 
-// Update Project
-router.put('/:id', apiUserController.auth, dataController.updateProject);
+router.post('/:id/comments', authController.auth, dataController.addComment, viewController.redirectToShowPage)
 
-// Delete Project
-router.delete('/:id', apiUserController.auth, dataController.deleteProject);
 
-module.exports = router;
+module.exports = router

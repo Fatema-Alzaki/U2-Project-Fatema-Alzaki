@@ -13,13 +13,12 @@ function Edit(props) {
   } = props.project;
 
   return (
-    <Layout user={props.user}>
+    <Layout user={props.user} token={props.token}>
       <h1>✏️ Edit {title}</h1>
 
       <form
         action={`/projects/${_id}?_method=PUT&token=${props.token}`}
         method="POST"
-        encType="multipart/form-data"
       >
         <div className="form-group">
           <label htmlFor="title">Project Title:</label>

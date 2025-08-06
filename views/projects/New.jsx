@@ -1,11 +1,11 @@
 const React = require("react");
 const Layout = require("../layouts/Layout");
 
-function New({ user }) {
+function New({ user, token }) {
   return (
-    <Layout user={user}>
+    <Layout user={user} token={token}>
       <h1>Create New Environmental Project</h1>
-      <form action="/projects" method="POST" encType="multipart/form-data">
+      <form action={`/projects/?token=${token}`} method="POST">
         <label>Title: <input type="text" name="title" required /></label><br />
         <label>Description: <textarea name="description" required /></label><br />
         <label>Location: <input type="text" name="location" required /></label><br />

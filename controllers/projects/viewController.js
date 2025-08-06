@@ -1,44 +1,61 @@
-const Project = require('../../models/Project')
+const RESOURCE_PATH = '/projects';
 
-module.exports = {
-  // Show all projects
-  async index(req, res) {
-    const projects = await Project.find({}).populate('user')
-    res.render('projects/Index', { projects, user: req.user })
+const viewController = {
+  // View: all projects
+  index(req, res, next) {
+    res.render('projects/Index', res.locals.data);
   },
 
-  // Show one project
-  async show(req, res) {
-    const project = await Project.findById(req.params.id)
-      .populate('user')
-      .populate('engineers')
-      .populate('comments.user')
-
-    res.render('projects/Show', { project, user: req.user })
+  volunteered(req, res, next) {
+    res.render('projects/Volunteered', res.locals.data);
   },
 
-  // Show project creation form
-  new(req, res) {
-    res.render('projects/New', { user: req.user })
+  // View: form to create a new project
+  new(req, res, next) {
+    res.render('projects/New', res.locals.data);
   },
 
-  // Show edit form for a project
-  async edit(req, res) {
-    const project = await Project.findById(req.params.id)
-    res.render('projects/Edit', { project, user: req.user })
+  // View: form to edit a project
+  edit(req, res, next) {
+    res.render('projects/Edit', res.locals.data);
   },
 
-  // Show projects this user volunteered for
-  async volunteered(req, res) {
-    const userId = req.user._id
-    const projects = await Project.find({ volunteers: userId })
-    res.render('projects/Volunteered', { projects, user: req.user })
+  // View: single project
+  show(req, res, next) {
+    res.render('projects/Show', res.locals.data);
   },
 
-  // Show projects created by this user
-  async myProjects(req, res) {
-    const userId = req.user._id
-    const projects = await Project.find({ owner: userId })
-    res.render('projects/MyProjects', { projects, user: req.user })
+  // Redirect: after editing or commenting (redirects to /projects/:id)
+  redirectToShowPage(req, res, next) {
+    if (res.locals.data.token) {
+      res.redirect(`${RESOURCE_PATH}/${req.params.id}?token=${res.locals.data.token}`);
+    } else {
+      res.redirect(`${RESOURCE_PATH}/${req.params.id}`);
+    }
+  },
+
+  // Redirect: after creating or deleting (redirects to /projects/index/created)
+  redirectToCreatedProjects(req, res, next) {
+    if (res.locals.data.token) {
+      res.redirect(`${RESOURCE_PATH}/index/created?token=${res.locals.data.token}`);
+    } else {
+      res.redirect(`${RESOURCE_PATH}/index/created`);
+    }
+  },
+
+  // View: user's created projects with delete buttons
+  indexWithDeleteButtons(req, res, next) {
+    res.render('projects/MyProjects', res.locals.data);
+  },
+
+  // Redirect: after volunteering (redirects to /projects/index/volunteered)
+  redirectToVolunteeredProjects(req, res, next) {
+    if (res.locals.data.token) {
+      res.redirect(`${RESOURCE_PATH}/index/volunteered?token=${res.locals.data.token}`);
+    } else {
+      res.redirect(`${RESOURCE_PATH}/index/volunteered`);
+    }
   }
-}
+};
+
+module.exports = viewController;

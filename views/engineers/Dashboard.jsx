@@ -1,9 +1,9 @@
 const React = require('react')
 const Layout = require('../layouts/Layout')
 
-function Dashboard({ engineer, projects, stats }) {
+function Dashboard({ engineer, projects, stats, token}) {
   return (
-    <Layout engineer={engineer}>
+    <Layout engineer={engineer} token={token}>
       <h2>Welcome back, {engineer.name}</h2>
 
       <h3>Your Stats</h3>

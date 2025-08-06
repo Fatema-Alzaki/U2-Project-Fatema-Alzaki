@@ -1,7 +1,7 @@
 const { useSyncExternalStore } = require('react');
 const User = require('../../models/User');
 const bcrypt = require('bcrypt');
-
+const jwt = require('jsonwebtoken')
 /*
 ### users
  
@@ -47,7 +47,7 @@ dataController.auth = async (req, res, next) => {
     res.locals.data.token = token
     next()
   } catch (error) {
-    res.status(401).send('Not authorized')
+    res.status(401).send(error.message)
   }
 }
 

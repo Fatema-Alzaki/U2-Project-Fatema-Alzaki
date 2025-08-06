@@ -9,7 +9,7 @@ const dataController = require('./dataController');
 router.get('/signup', viewController.signUp);
 
 // Handle signup form submission
-router.post('/signup', dataController.createUser, viewController.redirectToLogin);
+router.post('/signup', dataController.signUp, viewController.redirectToLogin);
 
 // Login page (form)
 router.get('/signin', viewController.signIn);
@@ -18,10 +18,10 @@ router.get('/signin', viewController.signIn);
 router.post('/signin', dataController.loginUser, viewController.redirectToHome);
 
 // Web views
-router.get('/', dataController.index, viewController.index)
+
 router.get('/profile', apiController.auth, viewController.profile)
-router.get('/:id', dataController.show, viewController.show)
-router.get('/:id/edit', dataController.show, viewController.edit)
+router.get('/:id', dataController.profile, viewController.show)
+router.get('/:id/edit', dataController.profile, viewController.edit)
 
 // API routes
 router.get('/api/profile', apiController.auth, apiController.getProfile)

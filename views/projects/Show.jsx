@@ -1,11 +1,11 @@
 const React = require('react');
 const Layout = require('../layouts/Layout');
 
-function Show({ project, engineer, props }) {
+function Show({ project, engineer, token }) {
   const isFull = project.volunteers.length >= project.volunteerLimit;
 
   return (
-    <Layout engineer={engineer}>
+    <Layout engineer={engineer} token={token}>
       <h1>{project.title}</h1>
 
       {/* {project.beforeImage && (
@@ -23,30 +23,21 @@ function Show({ project, engineer, props }) {
       <p><strong>Timeline:</strong> {project.dateStarted} → {project.dateCompleted || 'Ongoing'}</p>
 
       <div className="d-flex gap-2">
-        <a href={`/projects?token=${props.token}`} className="btn btn-secondary">
+        <a href={`/projects?token=${token}`} className="btn btn-secondary">
           ← Back to All Projects
         </a>
-        <a href={`/projects/${project._id}/edit?token=${props.token}`} className="btn btn-primary">
+        <a href={`/projects/${project._id}/edit?token=${token}`} className="btn btn-primary">
           ✏️ Edit Project
         </a>
       </div>
-
-      <div className="mt-3">
-        <form action={`/projects/${project._id}?_method=DELETE&token=${props.token}`} method="POST">
-          <button type="submit" className="btn btn-danger">
-            🗑️ Delete Project
-          </button>
-        </form>
-      </div>
-{/* 
       <p>
         <strong>Volunteers:</strong> {project.volunteers.length} / {project.volunteerLimit}
         {isFull && <span style={{ color: 'red', marginLeft: '10px' }}>FULL</span>}
       </p>
 
       {!isFull && (
-        <form method="POST" action={`/projects/${project._id}/signup`}>
-          <button type="submit" className="btn btn-success">Join Project</button>
+        <form method="POST" action={`/projects/${project._id}/volunteer/?token=${token}`}>
+          <button type="submit" className="btn btn-success">Volunteer For Project</button>
         </form>
       )}
 
@@ -64,7 +55,7 @@ function Show({ project, engineer, props }) {
         )}
       </ul>
 
-      <form method="POST" action={`/projects/${project._id}/comments`}>
+      <form method="POST" action={`/projects/${project._id}/comments/?token=${token}`}>
         <textarea
           name="text"
           placeholder="Leave a comment..."
@@ -74,7 +65,7 @@ function Show({ project, engineer, props }) {
         ></textarea>
         <br />
         <button type="submit" className="btn btn-primary">Post</button>
-      </form> */}
+      </form> 
     </Layout>
   );
 }

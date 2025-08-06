@@ -36,12 +36,14 @@ app.engine('jsx', require('jsx-view-engine')());
 
 const authRoutes = require('./controllers/auth/routeController')
 const { auth } = require('./controllers/auth/apiController')
-const apiRoutes = require('./routes/apiRoutes');
+// const apiRoutes = require('./routes/apiRoutes');
+const projectRouter = require('./controllers/projects/routeController')
 
 // ---------------------------
 // 🛣 Route Mounting
 // ---------------------------
 // app.use('/', webRoutes);
+
 app.get('/', auth, (req, res) => {
     res.render('layouts/Layout', {
         ...res.locals.data,
@@ -50,8 +52,12 @@ app.get('/', auth, (req, res) => {
 })
 
 
-app.use('/api', apiRoutes);
+// app.use('/api', apiRoutes);
 app.use('/auth', authRoutes);
+/*
+auth/.....
+*/
+app.use('/projects', projectRouter)
 
 // ---------------------------
 module.exports = app;

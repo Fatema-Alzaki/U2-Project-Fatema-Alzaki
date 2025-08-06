@@ -1,6 +1,6 @@
 const React = require("react");
 
-function Layout({ children, user }) {
+function Layout({ children, user , token}) {
   return (
     <html>
       <head>
@@ -13,21 +13,24 @@ function Layout({ children, user }) {
           <header>
             <h1>🌱 EcoFix Hub</h1>
             {user ? (
-              <p>Welcome, {user.name}! <a href="/auth/signout">Sign out</a></p>
+              <p>Welcome, {user.name}! <a href="/auth/signup">Sign out</a></p>   
             ) : (
               <p><a href="/auth/signin">Login</a> | <a href="/auth/signup">Sign up</a></p>
             )}
             <hr />
           </header>
+          {user &&
           <div className="dashboard-container">
             <nav style={{ textAlign: 'center', margin: '20px 0' }}>
-              <a href="/projects">All Projects</a> |{" "}
-              <a href="/dashboard">Dashboard</a> |{" "}
-              <a href="/projects/volunteered">My Volunteered Projects</a> |{" "}
-              <a href="/projects/my">My Created Projects</a> |{" "}
-              <a href="/profile">My Profile</a> {" "}
+              <a href={`/projects/?token=${token}`}>All Projects</a> |{" "}
+              {/* <a href={`/dashboard/?token=${token}`}>Dashboard</a> |{" "} */}
+              <a href={`/projects/new/?token=${token}`}>create Project</a> |{" "}
+              <a href={`/projects/index/volunteered/?token=${token}`}>My Volunteered Projects</a> |{" "}
+              <a href={`/projects/index/created/?token=${token}`}>My Created Projects</a> |{" "}
+              <a href={`/auth/profile/?token=${token}`}>My Profile</a> {" "}
             </nav>
           </div>
+          }
           {children}
 
           <footer style={{ marginTop: "2rem", textAlign: "center", fontSize: "0.8rem" }}>

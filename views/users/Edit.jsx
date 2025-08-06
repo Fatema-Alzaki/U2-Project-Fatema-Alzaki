@@ -5,9 +5,9 @@ function Edit(props) {
   const { user } = props;
 
   return (
-    <Layout>
+    <Layout token={props.token}>
       <h1>Edit User</h1>
-      <form action={`/users/${user._id}?_method=PUT`} method="POST">
+      <form action={`/users/${user._id}?_method=PUT&token=${props.token}`} method="POST">
         <label>
           Name: <input type="text" name="name" defaultValue={user.name} required />
         </label>

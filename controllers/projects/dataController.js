@@ -47,7 +47,10 @@ const dataController = {}
 */
 dataController.createProject = async (req, res, next) => {
   try {
+    console.log(req.body)
+    req.body.createdBy = req.user._id
     const project = new Project(req.body);
+    project.volunteers.addToSet(req.user)
     await project.save()
     res.locals.data.project = project
     next()
@@ -64,13 +67,16 @@ dataController.createProject = async (req, res, next) => {
 
 dataController.editProject = async (req, res, next) => {
   try {
-    const project = await Project.findById(req.params.id).populate('user')
+    const project = await Project.findById(req.params.id).populate('createdBy volunteers')
+    console.log(req.body)
+    console.log(project)
     if (!project) {
       return res.status(404).json({ error: 'Project not found' })
     }
-    if (req.user._id.toString() !== project.user.toString()) {
+    if (req.user._id.toString() !== project.createdBy._id.toString()) {
       return res.status(403).json({ error: 'Unauthorized to edit this project' })
     }
+    await project.updateOne(req.body)
     res.locals.data.project = project
     next()
   } catch (error) {
@@ -100,7 +106,6 @@ dataController.deleteProject = async (req, res, next) => {
     res.status(400).json({ error: error.message });
   }
 };
-
 
 
 dataController.addComment = async (req, res, next) => {
@@ -149,7 +154,7 @@ dataController.signupForProject = async (req, res, next) => {
       return res.status(400).json({ message: 'Project is full' })
     }
 
-    project.volunteers.push(req.user._id)
+    project.volunteers.addToSet({_id: req.user._id})
     await project.save()
     next()
 
@@ -168,23 +173,12 @@ dataController.signupForProject = async (req, res, next) => {
 // - see projects a user is volunteered on *
 //         - index filtered by being included in the volunteers
 
-dataController.readAllProjects = async (req, res, next) => {
-  try {
-    res.locals.data.projects = await Project.find({});
-    next();
-  } catch (error) {
-    res.status(400).send({ message: error.message });
-  }
-};
-
 
 dataController.seeIndividualProject = async (req, res, next) => {
   try {
     const project = await Project.findById(req.params.id)
-      .populate('owner') 
-      .populate('volunteers') 
-      .populate('comments.user')
-
+      .populate('createdBy volunteers comments')
+       
     if (!project) {
       return res.status(404).send({ message: 'Project not found' });
     }
@@ -200,7 +194,7 @@ dataController.seeIndividualProject = async (req, res, next) => {
 dataController.seeUserCreatedProjects = async (req, res, next) => {
   try {
     const userId = req.user._id;
-    res.locals.data.projects = await Project.find({ owner: userId });
+    res.locals.data.projects = await Project.find({ createdBy: userId });
     next();
   } catch (error) {
     res.status(400).send({ message: error.message });
@@ -211,7 +205,10 @@ dataController.seeUserCreatedProjects = async (req, res, next) => {
 dataController.volunteeredProjects = async (req, res, next) => {
   try {
     const userId = req.user._id;
-    res.locals.data.projects = await Project.find({ volunteers: userId });
+    const foundProjects = await Project.find({});
+    // loop through this thing if we get an error
+    const filteredProjects = foundProjects.filter((project) => project.volunteers.includes(userId))
+    res.locals.data.projects = filteredProjects
     next();
   } catch (error) {
     res.status(400).send({ message: error.message });

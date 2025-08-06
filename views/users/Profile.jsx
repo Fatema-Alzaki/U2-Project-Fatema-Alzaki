@@ -5,7 +5,7 @@ function Profile(props) {
   const { user } = props;
 
   return (
-    <Layout>
+    <Layout token={props.token}>
       <h1>Your Profile</h1>
       <p><strong>Name:</strong> {user.name}</p>
       <p><strong>Email:</strong> {user.email}</p>
