@@ -4,11 +4,16 @@ const router = express.Router();
 const dataController = require('./dataController');
 const viewController = require('./viewController');
 const authController = require('../../controllers/auth/dataController');
+const path = require('path');
+const multer = require('multer');
+
 
 // ----------------------
 // 🌐 View Routes
 // ----------------------
 /*
+
+
 ### projects
 - create a project * loggedin
         - verify the user
@@ -16,7 +21,23 @@ const authController = require('../../controllers/auth/dataController');
         - create a project
         - send them back to the project index
 */
-router.post('/', authController.auth, dataController.createProject, viewController.redirectToCreatedProjects)// this redirects to createdProjects
+
+// 🔧 Multer setup
+const storage = multer.diskStorage({
+  destination: function (req, file, cb) {
+    cb(null, 'public/uploads'); // Save in this folder
+  },
+  filename: function (req, file, cb) {
+    cb(null, Date.now() + '-' + file.originalname); // Unique filename
+  }
+});
+const upload = multer({ storage });
+
+
+router.post('/', authController.auth, upload.fields([
+    { name: 'beforeImage', maxCount: 1 },
+    { name: 'afterImage', maxCount: 1 }
+  ]),dataController.createProject, viewController.redirectToCreatedProjects)// this redirects to createdProjects
 router.get('/new', authController.auth, viewController.new) // show the form that has the create action
 
 /*

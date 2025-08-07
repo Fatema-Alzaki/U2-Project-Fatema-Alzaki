@@ -5,6 +5,7 @@ function Volunteered({ projects, user, token }) {
   return (
     <Layout user={user} token={token}>
       <h1>My Volunteered Projects</h1>
+      <a href={`/?token=${token}`}>homepage</a>
 
       {projects.length === 0 ? (
         <p>You haven't volunteered for any projects yet.</p>
@@ -18,6 +19,7 @@ function Volunteered({ projects, user, token }) {
             </li>
           ))}
         </ul>
+        
       )}
     </Layout>
   );

@@ -45,19 +45,31 @@ const dataController = {}
        - create a project
        - send them back to the project index
 */
+
 dataController.createProject = async (req, res, next) => {
   try {
-    console.log(req.body)
-    req.body.createdBy = req.user._id
-    const project = new Project(req.body);
-    project.volunteers.addToSet(req.user)
-    await project.save()
-    res.locals.data.project = project
-    next()
+    // Get uploaded file names if available
+    const beforeImagePath = req.files?.beforeImage?.[0]?.filename || null;
+    const afterImagePath = req.files?.afterImage?.[0]?.filename || null;
+    // Create project with full data
+    const project = new Project({
+      ...req.body,
+      createdBy: req.user._id,
+      beforeImage: beforeImagePath,
+      afterImage: afterImagePath
+    });
+
+    // Auto-volunteer the creator
+    project.volunteers.addToSet(req.user);
+
+    // Save and forward
+    await project.save();
+    res.locals.data.project = project;
+    next();
   } catch (error) {
     res.status(400).json({ error: error.message });
   }
-}
+};
 /*
 - edit a project * loggedin * authorized
     - show a form to edit project
@@ -97,7 +109,7 @@ dataController.deleteProject = async (req, res, next) => {
     if (!project) {
       return res.status(404).json({ error: 'Project not found' })
     }
-    if (req.user._id.toString() !== project.owner.toString()) {
+    if (req.user._id.toString() !== project.createdBy.toString()) {
       return res.status(403).json({ error: 'Unauthorized to delete this project' })
     }
     await project.deleteOne()
@@ -111,7 +123,7 @@ dataController.deleteProject = async (req, res, next) => {
 dataController.addComment = async (req, res, next) => {
   try {
     const project = await Project.findById(req.params.id)
-    const comment = new Comment({...req.body, user: req.user._id})
+    const comment = new Comment({ ...req.body, user: req.user._id })
     await comment.save()
     project.comments.addToSet(comment)
     await project.save()
@@ -122,24 +134,24 @@ dataController.addComment = async (req, res, next) => {
 }
 
 dataController.show = async (req, res, next) => {
-    try {
-        res.locals.data.project = await Project.findById(req.params.id)
-        if(!res.locals.data.project){
-            throw new error(`could not locate a project with the id ${req.params.id}`)
-        }
-        next()
-    } catch (error) {
-      res.status(400).send({ message: error.message })
+  try {
+    res.locals.data.project = await Project.findById(req.params.id)
+    if (!res.locals.data.project) {
+      throw new error(`could not locate a project with the id ${req.params.id}`)
     }
+    next()
+  } catch (error) {
+    res.status(400).send({ message: error.message })
+  }
 }
 
 dataController.index = async (req, res, next) => {
-    try {
-        res.locals.data.projects = await Project.find({})
-        next()
-    } catch (error) {
-      res.status(400).send({ message: error.message })
-    }
+  try {
+    res.locals.data.projects = await Project.find({})
+    next()
+  } catch (error) {
+    res.status(400).send({ message: error.message })
+  }
 }
 
 dataController.signupForProject = async (req, res, next) => {
@@ -154,7 +166,7 @@ dataController.signupForProject = async (req, res, next) => {
       return res.status(400).json({ message: 'Project is full' })
     }
 
-    project.volunteers.addToSet({_id: req.user._id})
+    project.volunteers.addToSet({ _id: req.user._id })
     await project.save()
     next()
 
@@ -178,7 +190,7 @@ dataController.seeIndividualProject = async (req, res, next) => {
   try {
     const project = await Project.findById(req.params.id)
       .populate('createdBy volunteers comments')
-       
+
     if (!project) {
       return res.status(404).send({ message: 'Project not found' });
     }

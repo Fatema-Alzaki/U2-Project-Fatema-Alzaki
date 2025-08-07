@@ -4,6 +4,7 @@ const viewController = {
   // View: all projects
   index(req, res, next) {
     res.render('projects/Index', res.locals.data);
+    
   },
 
   volunteered(req, res, next) {

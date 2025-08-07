@@ -4,6 +4,10 @@ const cors = require('cors');
 const methodOverride = require('method-override');
 const morgan = require('morgan');
 const path = require('path');
+const authRoutes = require('./controllers/auth/routeController')
+const { auth } = require('./controllers/auth/apiController')
+// const apiRoutes = require('./routes/apiRoutes');
+const projectRouter = require('./controllers/projects/routeController')
 
 require('dotenv').config();
 
@@ -34,10 +38,7 @@ app.engine('jsx', require('jsx-view-engine')());
 
 // ✅ ADD THIS
 
-const authRoutes = require('./controllers/auth/routeController')
-const { auth } = require('./controllers/auth/apiController')
-// const apiRoutes = require('./routes/apiRoutes');
-const projectRouter = require('./controllers/projects/routeController')
+
 
 // ---------------------------
 // 🛣 Route Mounting
@@ -47,7 +48,9 @@ const projectRouter = require('./controllers/projects/routeController')
 app.get('/', auth, (req, res) => {
     res.render('layouts/Layout', {
         ...res.locals.data,
-        user: req.user
+        user: req.user,
+        currentUrl: '/', // <- this is critical for condition
+        
     })
 })
 

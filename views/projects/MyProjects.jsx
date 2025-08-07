@@ -15,18 +15,20 @@ function MyProjects({ projects, user, token}) {
               <a href={`/projects/${project._id}/?token=${token}`}>{project.title}</a>
               <div>
                 <a href={`/projects/${project._id}/edit/?token=${token}`}>Edit</a> |{" "}
-                <form
-                  action={`/projects/${project._id}?_method=DELETE/?token=${token}`}
-                  method="POST"
-                  style={{ display: 'inline' }}
-                >
+               <form
+  action={`/projects/${project._id}?_method=DELETE&token=${token}`}
+  method="POST"
+  style={{ display: 'inline' }}
+>
+
                   <button type="submit">🗑️ Delete Project </button>
+                  
                 </form>
               </div>
             </li>
           ))}
         </ul>
-      )}
+      )} <a href={`/?token=${token}`}>homepage</a>
     </Layout>
   );
 }

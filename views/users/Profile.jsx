@@ -11,6 +11,7 @@ function Profile(props) {
       <p><strong>Email:</strong> {user.email}</p>
       {/* You can expand this with impact stats, volunteer info, etc. */}
     </Layout>
+    
   );
 }
 
