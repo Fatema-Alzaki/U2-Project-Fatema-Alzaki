@@ -1,84 +1,94 @@
-# U2-Project-Fatema-Alzaki
-
+<p align="center">
+  <img src="public/assets/logo.png" alt="EcoFix Hub Logo" width="150"/>
+</p>
 
 # 🌱 EcoFix Hub – Environmental Repair Tracker
 
-EcoFix Hub is a full-stack MVC application that empowers engineers to log, manage, and monitor **environmental repair projects**. It focuses on *restoring* what’s damaged — from oil spills to broken solar installations — and provides detailed insights into environmental recovery efforts.
+EcoFix Hub is a full-stack MVC platform that empowers engineers to log, manage, and monitor **environmental repair projects**. It focuses on *restoring damaged ecosystems* — from oil spills to malfunctioning solar stations — by documenting, analyzing, and visualizing each restoration effort.
 
 ---
 
 ## 📸 Preview
-> _Add screenshots of your dashboard and project pages here once styled._
+
+> _Add project screenshots here (e.g., project cards, show pages, dashboard, etc.)_  
+> *You can use `public/uploads/` images or add them to `public/assets`.*
 
 ---
 
 ## 🧠 Project Summary
 
-**EcoFix Hub** is designed for environmental engineers to:
-- Register/login securely using JWT
-- Create repair project entries
-- Assign themselves to repairs (many-to-many relationship)
-- Document project locations, pollution type, and tools used
-- Upload field images (before/after cleanup)
-- Track CO₂ mitigation, timelines, and site restorations
-- View an analytics dashboard
+**EcoFix Hub** enables environmental engineers and volunteers to:
 
-> Ideal for NGOs, climate task forces, and eco-engineering students.
+- Securely register and login (JWT-based)
+- Create repair project entries
+- Assign themselves to projects (many-to-many)
+- Track site type, equipment, issue severity
+- Upload before/after field images (via Multer)
+- Monitor CO₂ mitigation, timelines, and progress
+- View a personalized dashboard of impact metrics
+
+> Perfect for NGOs, climate restoration teams, and sustainability programs.
 
 ---
 
 ## 🔧 Core Features
 
-| Category       | Details |
-|----------------|---------|
-| 🔐 Auth        | JWT-based authentication system (Register/Login) |
-| 🧑‍🔧 Engineers | CRUD for engineers (specialty, location, availability) |
-| 🔧 Projects    | CRUD for repair projects (air, soil, marine, etc.) |
-| 📸 Media       | File uploads: before/after field images using `multer` |
-| 📈 Dashboard   | Project counts, CO₂ saved, areas restored |
-| 🧭 Routing     | Fully RESTful MVC routes (views + API) |
-| 🧪 Testing     | Unit + integration tests with `Jest` and `Supertest` |
+| Category       | Description |
+|----------------|-------------|
+| 🔐 Auth        | JWT-secured routes and form-based login |
+| 🧑‍🔧 Engineers | CRUD for engineers with location, expertise |
+| 🔧 Projects    | CRUD for environmental projects |
+| 🤝 Volunteer   | Join/leave project with capacity limits |
+| 💬 Comments    | Authenticated comment system |
+| 📸 Media       | Upload before/after images via `multer` |
+| 📈 Dashboard   | Shows number of projects, engineers, impact |
+| 🎨 Frontend    | Styled JSX views with layout, icons, and cards |
+| 🧪 Testing     | Unit + integration tests (`Jest`, `Supertest`) |
 
 ---
 
 ## 🧱 Tech Stack
 
-### Backend:
-- [Node.js](https://nodejs.org/) + [Express.js](https://expressjs.com/)
-- [MongoDB](https://www.mongodb.com/) + [Mongoose](https://mongoosejs.com/)
-- [JWT](https://jwt.io/) (Authentication)
-- [Multer](https://www.npmjs.com/package/multer) (Image uploads)
+**Backend:**
+- Node.js + Express.js
+- MongoDB + Mongoose
+- JWT (authentication)
+- Multer (image upload)
 
-### Frontend:
-- [JSX Views](https://reactjs.org/docs/introducing-jsx.html) (EJS-style JSX components)
-- CSS (Custom + responsive)
+**Frontend:**
+- JSX Views (EJS-style JSX templates)
+- Responsive layout using custom CSS
 
-### Testing:
-- [Jest](https://jestjs.io/) (Unit Tests)
-- [Supertest](https://www.npmjs.com/package/supertest) (API Testing)
-- [mongodb-memory-server](https://www.npmjs.com/package/mongodb-memory-server)
+**Testing:**
+- Jest for unit tests
+- Supertest for API integration
+- mongodb-memory-server for isolated test DB
 
 ---
 
-## 🔃 Project Structure
+## 📂 Project Structure
 
 ```
 eco-fix-hub/
-├── models/               # Mongoose Models (User, Engineer, Project)
-├── controllers/          # Separated by resource & type (api/data/view)
-├── views/                # JSX view templates (engineers/projects/layouts)
-├── routes/               # Main API & view routes
-├── tests/                # Unit and integration tests
-├── public/               # Static assets (styles, images)
-├── app.js                # Express setup
-├── server.js             # Server entry
-├── .env                  # Environment config
-└── README.md
+├── models/               # Mongoose schemas
+├── controllers/          # apiController, dataController, viewController
+│   ├── auth/
+│   ├── engineers/
+│   ├── projects/
+│   └── users/
+├── views/                # JSX pages for engineers/projects
+│   ├── layouts/
+├── routes/               # Web and API route definitions
+├── public/               # styles.css, uploaded images, assets
+├── tests/                # Jest + Supertest test files
+├── app.js                # Main Express app
+├── server.js             # Server entry point
+└── .env
 ```
 
 ---
 
-## 🔗 Model Relationships
+## 🔗 Data Relationships
 
 ```
 User ────┐
@@ -86,7 +96,9 @@ User ────┐
         └──> Project (createdBy)
 ```
 
-Each **engineer** is linked to **many projects**. Each **project** may involve **multiple engineers**. Users can **create engineers and projects**.
+- **Users** can create **engineers** and **projects**
+- **Engineers** and **Projects** are many-to-many
+- Projects hold lists of **volunteers** and **comments**
 
 ---
 
@@ -95,24 +107,23 @@ Each **engineer** is linked to **many projects**. Each **project** may involve *
 ```env
 PORT=3000
 MONGODB_URI=mongodb://localhost:27017/ecofixhub
-JWT_SECRET=your_jwt_secret
+JWT_SECRET=super_secure_secret
 ```
 
 ---
 
-## 🧪 Testing Guide
+## 🧪 Testing Overview
 
-We use **Jest** + **Supertest** with an in-memory MongoDB server.
+All models and endpoints are tested using Jest + Supertest:
 
-| Test File           | Coverage                          |
-|---------------------|-----------------------------------|
-| `user.test.js`      | Auth (register/login)             |
-| `engineer.test.js`  | Engineer model & endpoints        |
-| `project.test.js`   | Project model & endpoints         |
-| `integration.test.js` | Link engineer <-> project      |
+| Test File            | Coverage                             |
+|----------------------|--------------------------------------|
+| `user.test.js`       | Register, login, token validation    |
+| `engineer.test.js`   | CRUD operations for engineers        |
+| `project.test.js`    | Project CRUD, volunteer limits       |
+| `integration.test.js`| Relationship and auth flows          |
 
-Run tests with:
-
+**Run tests:**
 ```bash
 npm test
 ```
@@ -121,45 +132,59 @@ npm test
 
 ## 📊 Dashboard Features
 
-- Total engineers involved
-- Total projects completed
-- Pollution type stats (air, soil, marine)
-- Timeline of repairs
-- Visual charts (optional: Chart.js or D3.js)
+- Total number of projects and engineers
+- CO₂ saved (based on project metadata)
+- Environmental impact by category (air/soil/water)
+- Timeline of completed efforts
+- [Optionally] integrate `Chart.js` for visuals
+
+---
+
+## 🧭 Navigation Links
+
+- `/projects` → All Projects  
+- `/projects/index/created` → My Created Projects  
+- `/projects/index/volunteered` → My Volunteered Projects  
+- `/projects/new` → Create New Project  
+- `/auth/profile` → User Profile  
+- `/dashboard` → Engineer Dashboard  
 
 ---
 
 ## 💡 Future Enhancements
 
-- 🌍 Location map for project sites (Leaflet.js)
-- 🔍 Search/filter by issue type, region, date
-- 📨 Email notification system
-- 📄 PDF/CSV project report downloads
-- 📱 Responsive PWA frontend
+- 🌍 Map-based project locator (Leaflet.js)
+- 🧠 AI-based project classification by impact
+- 📊 Charts & graphs on dashboard (Chart.js / D3.js)
+- 📨 Email notifications
+- 📁 CSV/PDF export for project summaries
+- 📱 Convert to mobile PWA
 
 ---
 
-## 🎓 Project Requirements Reference
+## ✅ Meets Unit 2 Requirements
 
-This project meets all **Unit 2** core requirements:
-- ✅ 2+ Mongoose Models
-- ✅ JWT Authentication
-- ✅ Full MVC Structure
-- ✅ Styling with custom layout
-- ✅ Unit + Integration Tests
-- ✅ Creative, useful project idea
-
----
-## 📜 License
-
-This project is MIT Licensed. You’re free to fork, improve, or contribute.
+| Requirement                      | ✅ Done |
+|----------------------------------|--------|
+| At least 2 Mongoose models       | ✅      |
+| Full MVC (controllers + views)   | ✅      |
+| Auth using JWT                   | ✅      |
+| Custom styling / layout          | ✅      |
+| Tests with Jest + Supertest      | ✅      |
+| File Upload with Multer          | ✅      |
+| Many-to-many relationship        | ✅      |
+| Personalized user dashboard      | ✅      |
 
 ---
 
 ## 👩‍💻 Author
 
-Fatema Alzaki  
-Software Engineering Immersive Fellow, General Assembly  
-[LinkedIn](https://www.linkedin.com/) • [GitHub](https://github.com/)
+**Fatema Alzaki**  
+Software Engineering Immersive | General Assembly  
+[GitHub](https://github.com/) • [LinkedIn](https://linkedin.com/)  
 
+---
 
+## 📜 License
+
+This project is open source under the MIT License.
